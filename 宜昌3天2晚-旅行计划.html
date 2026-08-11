@@ -51,6 +51,9 @@
   .zoom-food a { display:block; background:#fff; color:#e11d48; font-weight:600; font-size:13px; padding:8px 12px; border-radius:6px; box-shadow:0 1px 5px rgba(0,0,0,.3); text-decoration:none; margin-bottom:4px; text-align:center; }
   .zoom-food a:hover { background:#fff5f5; }
   .zoom-food a:last-child { margin-bottom:0; color:#d92d20; }
+  #map.map-expanded { position:fixed; inset:0; width:100vw; height:100vh; z-index:2000; border-radius:0; }
+  .map-exp a { display:block; background:#fff; color:#0f766e; font-weight:600; font-size:13px; padding:8px 12px; border-radius:6px; box-shadow:0 1px 5px rgba(0,0,0,.3); text-decoration:none; }
+  .map-exp a:hover { background:#f0fdf4; }
   .specials { display:grid; gap:6px; margin-bottom:12px; }
   .spec { display:flex; flex-wrap:wrap; gap:4px 8px; align-items:baseline; font-size:13px; padding:6px 0; border-bottom:1px dashed var(--border); }
   .spec-name { font-weight:700; color:var(--amber); white-space:nowrap; }
@@ -603,6 +606,21 @@ if (typeof module !== 'undefined' && module.exports) {
     return d;
   };
   focusBtn.addTo(map);
+  // 地图展开/收起按钮（右上角）
+  var expBtn = L.control({ position: 'topright' });
+  expBtn.onAdd = function(){
+    var d = L.DomUtil.create('div', 'leaflet-bar map-exp');
+    d.innerHTML = '<a href="#" role="button" title="展开/收起地图" onclick="return false">⛶ 展开</a>';
+    L.DomEvent.on(d, 'click', function(e){
+      L.DomEvent.stop(e);
+      var m = document.getElementById('map');
+      var expanded = m.classList.toggle('map-expanded');
+      d.querySelector('a').textContent = expanded ? '✕ 收起' : '⛶ 展开';
+      setTimeout(function(){ map.invalidateSize(); }, 50);
+    });
+    return d;
+  };
+  expBtn.addTo(map);
   map.fitBounds(bounds, { padding: [30, 30] });
 })();
 </script>
