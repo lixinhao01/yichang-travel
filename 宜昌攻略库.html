@@ -48,10 +48,17 @@
   .lb-count { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); color:#fff; font-size:13px; background:rgba(0,0,0,.55); padding:4px 14px; border-radius:12px; }
   .thumb { position:relative; }
   .thumb::after { content:"🔍"; position:absolute; right:4px; bottom:4px; font-size:12px; background:rgba(0,0,0,.45); border-radius:6px; padding:1px 4px; color:#fff; opacity:.85; }
+
+  .searchbar { position:sticky; top:0; z-index:600; padding:10px 12px; background:#f5f6f2; }
+  .searchbar input { width:100%; padding:12px 16px; border-radius:12px; border:1px solid #d1d5db; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,.08); }
+  .searchbar input:focus { outline:none; border-color:#0f766e; }
+  .search-count { display:block; font-size:12px; color:#0f766e; margin-top:5px; padding-left:4px; font-weight:600; }
 </style>
 </head>
 <body>
-<div class="hero"><div class="wrap" style="padding:0"><h1>📚 宜昌攻略库</h1><div class="sub">按地点聚合 · 红字 = 该地点相关词 · 标题命中优先</div></div></div>
+<div class="hero">
+<div class="searchbar"><input id="searchInput" type="search" placeholder="🔍 搜索景点/美食/关键词，如：三峡、凉虾、漂流、露营…" autocomplete="off"><span id="searchCount" class="search-count"></span></div>
+<div class="wrap" style="padding:0"><h1>📚 宜昌攻略库</h1><div class="sub">按地点聚合 · 红字 = 该地点相关词 · 标题命中优先</div></div></div>
 <div class="wrap">
   <a class="back" href="宜昌3天2晚-旅行计划.html">← 返回行程计划</a>
   <div class="summary">💡 共 251 篇（小红书 221 + 抖音 30）。每个地点下只收<strong>高度相关</strong>的攻略：<span style="color:#d92d20;font-weight:600">红字</span>标出该地点相关词，点击可展开全文/要点与图片。</div>
@@ -116,6 +123,31 @@ document.addEventListener('keydown', function(e){
   if (e.key === 'ArrowLeft') lbNav(-1);
   if (e.key === 'ArrowRight') lbNav(1);
 });
+</script>
+
+<script>
+(function(){
+  var input = document.getElementById('searchInput');
+  if (!input) return;
+  input.addEventListener('input', function(){
+    var q = this.value.trim().toLowerCase();
+    var placeCount = 0, postCount = 0;
+    document.querySelectorAll('.place').forEach(function(place){
+      var anyPost = false;
+      place.querySelectorAll('.post').forEach(function(post){
+        var match = !q || (post.textContent || '').toLowerCase().indexOf(q) >= 0;
+        post.style.display = match ? '' : 'none';
+        if (match) { anyPost = true; postCount++; }
+      });
+      place.style.display = anyPost ? '' : 'none';
+      if (q && anyPost) place.classList.add('open');
+      else if (!q) place.classList.remove('open');
+      if (anyPost) placeCount++;
+    });
+    var c = document.getElementById('searchCount');
+    c.textContent = q ? '找到 ' + postCount + ' 条相关词条（' + placeCount + ' 个地点）' : '';
+  });
+})();
 </script>
 </body>
 </html>
