@@ -53,6 +53,8 @@
   .searchbar input { width:100%; padding:12px 16px; border-radius:12px; border:1px solid #d1d5db; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,.08); }
   .searchbar input:focus { outline:none; border-color:#0f766e; }
   .search-count { display:block; font-size:12px; color:#0f766e; margin-top:5px; padding-left:4px; font-weight:600; }
+  mark.shl { background:#ffe066 !important; color:#b45309 !important; font-weight:700; border-radius:3px; padding:0 2px; box-shadow:0 0 0 1px #fcd34d; }
+
 </style>
 </head>
 <body>
@@ -137,7 +139,8 @@ document.addEventListener('keydown', function(e){
       place.querySelectorAll('.post').forEach(function(post){
         var match = !q || (post.textContent || '').toLowerCase().indexOf(q) >= 0;
         post.style.display = match ? '' : 'none';
-        if (match) { anyPost = true; postCount++; }
+        if (match) { anyPost = true; postCount++; highlightInPost(post, q); }
+        else { clearHL(post); }
       });
       place.style.display = anyPost ? '' : 'none';
       if (q && anyPost) place.classList.add('open');
@@ -147,6 +150,26 @@ document.addEventListener('keydown', function(e){
     var c = document.getElementById('searchCount');
     c.textContent = q ? '找到 ' + postCount + ' 条相关词条（' + placeCount + ' 个地点）' : '';
   });
+  function clearHL(post){ post.querySelectorAll('mark.shl').forEach(function(m){ m.replaceWith(document.createTextNode(m.textContent)); }); }
+  function highlightInPost(post, q){
+    clearHL(post);
+    if (!q) return;
+    var walker = document.createTreeWalker(post, NodeFilter.SHOW_TEXT, null);
+    var nodes = [];
+    while (walker.nextNode()){ var n = walker.currentNode; if (n.nodeValue.toLowerCase().indexOf(q) >= 0) nodes.push(n); }
+    nodes.forEach(function(tn){
+      var val = tn.nodeValue, lower = val.toLowerCase(), idx = 0;
+      var frag = document.createDocumentFragment();
+      while ((idx = lower.indexOf(q, idx)) >= 0){
+        if (idx > 0) frag.appendChild(document.createTextNode(val.slice(0, idx)));
+        var mark = document.createElement('mark'); mark.className = 'shl'; mark.textContent = val.substr(idx, q.length);
+        frag.appendChild(mark);
+        val = val.slice(idx + q.length); lower = lower.slice(idx + q.length); idx = 0;
+      }
+      if (val) frag.appendChild(document.createTextNode(val));
+      tn.parentNode.replaceChild(frag, tn);
+    });
+  }
 })();
 </script>
 </body>
