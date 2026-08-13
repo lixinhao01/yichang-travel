@@ -107,11 +107,14 @@
 
 <section><h3>🗺 行程地图</h3><div id="map"></div>
 <div class="map-legend">
-  <span><i style="background:#d92d20"></i>🏨 柏曼酒店（每天出发）</span>
+  <span><i style="background:#d92d20"></i>🏨 柏曼酒店</span>
   <span><i style="background:#f59e0b"></i>D1 小吃街</span>
   <span><i style="background:#0ea5e9"></i>D2 清江画廊</span>
   <span><i style="background:#8b5cf6"></i>D3 三峡大坝</span>
   <span><i style="background:#64748b"></i>D4 三峡瀑布</span>
+  <span><i style="background:#16a34a"></i>🚶 City Walk</span>
+  <span><i style="background:#f59e0b"></i>🍢 小吃街</span>
+  <span><i style="background:#e11d48"></i>🍜 美食店</span>
 </div></section>
 
 <section><h3>📅 每日行程</h3><div class="day"><div class="day-head"><span class="day-date">2026-08-17 周一</span><h3>DAY · 抵达 · 小吃街（铁路坝/解放路）</h3></div>
@@ -475,7 +478,38 @@ if (typeof module !== 'undefined' && module.exports) {
     var icon = L.divIcon({ className: '', html: '<span style="background:#e11d48;border-radius:50%;color:#fff;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 8px rgba(225,29,72,.5);border:2px solid #fff">🍜</span>', iconSize: [34, 34], iconAnchor: [17, 17] });
     L.marker([f.lat, f.lng], { icon: icon, zIndexOffset: 2000 }).addTo(foodLayer).bindPopup('<b style="color:#e11d48">🍜 ' + f.s + '</b><br><span class="tag">' + f.t + '</span> · ' + f.a + '<br>推荐：' + f.d + ' · ' + f.p);
   });
-  L.control.layers(null, { '🗺 行程路线': routeLayer, '🍜 美食': foodLayer }, { collapsed: false }).addTo(map);
+  // 🍢 各类小吃街/美食街标记
+  var STREETS = [
+    {name:'铁路坝小吃街', lat:30.70837, lng:111.28447, note:'萝卜饺子/烤猪蹄/红油小面'},
+    {name:'解放路步行街', lat:30.69888, lng:111.27865, note:'王氏凉虾/夜宵一条龙'},
+    {name:'陶珠路', lat:30.6979, lng:111.27881, note:'活鱼/土家菜'},
+    {name:'福绥路', lat:30.69614, lng:111.283, note:'本地美食街'},
+    {name:'二马路', lat:30.69673, lng:111.28118, note:'满意楼/豆腐'},
+    {name:'西坝夜市', lat:30.72532, lng:111.27197, note:'江边夜宵'},
+    {name:'珍珠路', lat:30.7115, lng:111.2806, note:'本地吃食'}
+  ];
+  STREETS.forEach(function(st){
+    bounds.push([st.lat, st.lng]);
+    var icon = L.divIcon({ className: '', html: '<span style="background:#f59e0b;color:#fff;border-radius:8px;font-size:13px;font-weight:700;padding:3px 6px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)">🍢</span>', iconSize: [28, 28], iconAnchor: [14, 14] });
+    L.marker([st.lat, st.lng], { icon: icon, zIndexOffset: 1500 }).addTo(foodLayer).bindPopup('<b style="color:#b45309">🍢 ' + st.name + '</b><br>' + st.note);
+  });
+  // 🚶 City Walk 路线（硬编码：滨江公园→二马路→解放路→古佛寺→儿童公园→铁路坝）
+  var cwLayer = L.featureGroup().addTo(map);
+  var CW = [
+    {name:'滨江公园·镇江阁', lat:30.70336, lng:111.27088},
+    {name:'二马路·满意楼', lat:30.69673, lng:111.28118},
+    {name:'解放路步行街', lat:30.69888, lng:111.27865},
+    {name:'古佛寺', lat:30.70218, lng:111.28253},
+    {name:'儿童公园', lat:30.70282, lng:111.28392},
+    {name:'铁路坝小吃街', lat:30.70837, lng:111.28447}
+  ];
+  L.polyline(CW.map(function(p){ return [p.lat, p.lng]; }), { color: '#16a34a', weight: 3, opacity: .8 }).addTo(cwLayer);
+  CW.forEach(function(p, i){
+    bounds.push([p.lat, p.lng]);
+    var icon = L.divIcon({ className: '', html: '<span style="background:#16a34a;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff">' + (i + 1) + '</span>', iconSize: [26, 26], iconAnchor: [13, 13] });
+    L.marker([p.lat, p.lng], { icon: icon }).addTo(cwLayer).bindPopup('<b style="color:#16a34a">🚶 City Walk ' + (i + 1) + ' · ' + p.name + '</b>');
+  });
+  L.control.layers(null, { '🗺 行程路线': routeLayer, '🚶 City Walk': cwLayer, '🍢 小吃街/🍜 美食': foodLayer }, { collapsed: false }).addTo(map);
   var focusBtn = L.control({ position: 'bottomleft' });
   focusBtn.onAdd = function(){
     var d = L.DomUtil.create('div', 'leaflet-bar zoom-food');
