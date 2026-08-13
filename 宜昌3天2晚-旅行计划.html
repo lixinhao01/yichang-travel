@@ -117,6 +117,13 @@
   <span><i style="background:#e11d48"></i>🍜 美食店</span>
 </div></section>
 
+<section><h3>🚌 交通小攻略（宾馆→景点）</h3>
+<div class="hotel-area"><h4>D1 · 8/17 小吃街</h4><p class="dim">柏曼酒店 → 铁路坝/解放路小吃街：约 4–6 km · 打车约 15 分钟 · 公交/步行</p><p class="warn">💡 市区打车/公交都方便；17–19 点下班高峰堵，建议 17:30 前到或 19:00 后去</p></div>
+<div class="hotel-area"><h4>D2 · 8/18 清江画廊（¥145）</h4><p class="dim">柏曼酒店 → 清江画廊：约 38 km · 旅游大巴/自驾约 1.2 小时</p><p class="warn">💡 门票¥145含船票提前订；坐旅游大巴（市区发车）或自驾；船次固定按点走</p></div>
+<div class="hotel-area"><h4>D3 · 8/19 三峡大坝</h4><p class="dim">柏曼酒店 → 三峡大坝：约 35 km · 大巴/自驾约 1 小时 + 景区观光车</p><p class="warn">💡 大坝免费但需在「三峡大坝旅游」公众号预约；到坝区换观光车，坛子岭→185→截流园</p></div>
+<div class="hotel-area"><h4>D4 · 8/20 三峡瀑布</h4><p class="dim">柏曼酒店 → 三峡瀑布：约 32 km · 大巴/自驾约 50 分钟</p><p class="warn">💡 提前预约（明天约）；早去人少凉快；穿防滑鞋、带雨具（穿瀑会湿）</p></div>
+</section>
+
 <section><h3>📅 每日行程</h3><div class="day"><div class="day-head"><span class="day-date">2026-08-17 周一</span><h3>DAY · 抵达 · 小吃街（铁路坝/解放路）</h3></div>
 <div class="day-tips">💡 到达后入住柏曼（天然塔），傍晚去小吃街；铁路坝 17 点后小吃出摊更全</div>
 <div class="slot">
@@ -448,6 +455,17 @@ if (typeof module !== 'undefined' && module.exports) {
     icon: L.divIcon({ className: '', html: '<div style="display:flex;flex-direction:column;align-items:center"><span style="background:#d92d20;color:#fff;border-radius:50%;width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 3px 14px rgba(217,45,32,.65);border:3px solid #fff">🏨</span><span style="background:#d92d20;color:#fff;font-size:11px;font-weight:700;border-radius:8px;padding:1px 7px;margin-top:3px">宾馆</span></div>', iconSize: [64, 70], iconAnchor: [32, 70] }),
     zIndexOffset: 3000
   }).addTo(routeLayer).bindPopup('<b style="color:#d92d20">🏨 柏曼酒店（宜昌沿江大道天然塔店）</b><br>已定 · 每天从这里出发');
+  function haversine(lat1, lng1, lat2, lng2){
+    var R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLng = (lng2 - lng1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+  var TRANS_TIPS = [
+    '市区打车/公交都方便；17-19点下班高峰堵，建议 17:30 前到或 19:00 后去',
+    '清江画廊坐旅游大巴或自驾，门票¥145含船票提前订，船次固定',
+    '三峡大坝免费需公众号预约，进坝区换景区观光车',
+    '三峡瀑布提前预约（明天约），早去人少凉快，穿防滑鞋'
+  ];
   trip.days.forEach(function(day, di){
     var color = dayColors[di % dayColors.length];
     var pts = [[hotel.lat, hotel.lng]];
@@ -456,7 +474,17 @@ if (typeof module !== 'undefined' && module.exports) {
       pts.push(p); bounds.push(p);
       var icon = L.divIcon({ className: '', html: '<span style="background:' + color + ';border-radius:50%;color:#fff;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.35);border:2px solid #fff">' + (di + 1) + '-' + (si + 1) + '</span>', iconSize: [30, 30], iconAnchor: [15, 15] });
       var navLinks = [{ label: '导航', url: buildNavLink(s.lat, s.lng, s.name, ua) }].concat(buildMapAppLinks(s.lat, s.lng, s.name));
+      var dist = Math.round(haversine(hotel.lat, hotel.lng, s.lat, s.lng));
+      var trans = s.transport || {};
+      var tip = TRANS_TIPS[di] || '';
+      // 线段中点距离/时间标签
+      var midLat = (hotel.lat + s.lat) / 2, midLng = (hotel.lng + s.lng) / 2;
+      var labelTxt = dist + 'km · ' + (trans.duration || '');
+      var lbl = L.divIcon({ className: '', html: '<span style="display:inline-block;background:#fff;border:1px solid ' + color + ';color:#334155;border-radius:10px;padding:2px 6px;font-size:11px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.18)">📏 ' + labelTxt + '</span>', iconSize: [44 + labelTxt.length * 6, 20], iconAnchor: [22 + labelTxt.length * 3, 10] });
+      L.marker([midLat, midLng], { icon: lbl, interactive: false }).addTo(routeLayer);
       var pop = '<b>' + (di + 1) + ' · ' + s.name + '</b><br>' + (s.time || '') + '<br>' + navLinks.map(function(l){ return '<a href="' + l.url + '">' + l.label + '</a>'; }).join(' · ');
+      pop += '<br><span style="color:#475569;font-size:12px">📏 距酒店约 ' + dist + ' km · 🚌 ' + (trans.mode || '') + ' · ⏱ ' + (trans.duration || '') + '</span>';
+      if (tip) pop += '<br><span style="color:#b45309;font-size:12px">💡 ' + tip + '</span>';
       var anchor = mapAnchor(s.name);
       if (anchor) pop += '<br><a class="pop-link" href="宜昌攻略库.html#' + encodeURIComponent(anchor) + '">📖 查看攻略 →</a>';
       L.marker(p, { icon: icon }).addTo(routeLayer).bindPopup(pop);
