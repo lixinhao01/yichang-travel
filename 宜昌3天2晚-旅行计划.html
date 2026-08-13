@@ -118,10 +118,20 @@
 </div></section>
 
 <section><h3>🚌 交通小攻略（宾馆→景点）</h3>
+<div class="hotel-area"><h4>🚌 景区直通车 · 从哪座 / 几点 / 票价</h4>
+<p class="dim"><b>上车点</b>：① 三峡游客中心（沿江大道142号，万达广场对面）② 宜昌东站（出站口旅游咨询旁停车场）<br>
+<b>购票</b>：微信小程序「<b>三峡旅游直通车</b>」选上车点买票</p>
+<div class="cmp"><table class="cmp-table"><tr><th>目的地</th><th>上车点</th><th>发车</th><th>返程</th><th>票价</th></tr>
+<tr><td>清江画廊</td><td>三峡游客中心</td><td>8:30 / 9:50</td><td rowspan="2">16:00 停车场</td><td rowspan="2">单程¥30<br>往返¥60</td></tr>
+<tr><td>清江画廊</td><td>宜昌东站</td><td>9:30 / 10:30</td></tr>
+<tr><td>三峡大瀑布</td><td>三峡游客中心</td><td>8:30</td><td rowspan="2">15:30 停车场</td><td rowspan="2">单程¥25<br>往返¥60</td></tr>
+<tr><td>三峡大瀑布</td><td>宜昌东站</td><td>9:30</td></tr></table></div>
+<p class="warn">⚠️ 节假日滚动发班（如8:00-10:00），以小程序当天为准；提前10分钟到上车点；2周岁以上按成人价；穿蓝色马甲工作人员引导</p>
+</div>
 <div class="hotel-area"><h4>D1 · 8/17 小吃街</h4><p class="dim">柏曼酒店 → 铁路坝/解放路小吃街：约 4–6 km · 打车约 15 分钟 · 公交/步行</p><p class="warn">💡 市区打车/公交都方便；17–19 点下班高峰堵，建议 17:30 前到或 19:00 后去</p></div>
-<div class="hotel-area"><h4>D2 · 8/18 清江画廊（¥145）</h4><p class="dim">柏曼酒店 → 清江画廊：约 38 km · 旅游大巴/自驾约 1.2 小时</p><p class="warn">💡 门票¥145含船票提前订；坐旅游大巴（市区发车）或自驾；船次固定按点走</p></div>
-<div class="hotel-area"><h4>D3 · 8/19 三峡大坝</h4><p class="dim">柏曼酒店 → 三峡大坝：约 35 km · 大巴/自驾约 1 小时 + 景区观光车</p><p class="warn">💡 大坝免费但需在「三峡大坝旅游」公众号预约；到坝区换观光车，坛子岭→185→截流园</p></div>
-<div class="hotel-area"><h4>D4 · 8/20 三峡瀑布</h4><p class="dim">柏曼酒店 → 三峡瀑布：约 32 km · 大巴/自驾约 50 分钟</p><p class="warn">💡 提前预约（明天约）；早去人少凉快；穿防滑鞋、带雨具（穿瀑会湿）</p></div>
+<div class="hotel-area"><h4>D2 · 8/18 清江画廊（¥145 含船票）</h4><p class="dim">柏曼酒店 → 清江画廊：约 38 km · 直通车/大巴约 1.2 小时，或宜昌→长阳客运站大巴约 1 小时再转</p><p class="warn">💡 门票¥145含船票提前订；坐景区直通车（三峡游客中心 8:30/9:50）或自驾；船次固定按点走</p></div>
+<div class="hotel-area"><h4>D3 · 8/19 三峡大坝</h4><p class="dim">柏曼酒店 → 三峡大坝：约 35 km · 大巴/自驾约 1 小时 + 景区观光车</p><p class="warn">💡 大坝<b>免门票</b>，景区观光车/大巴 ¥35/人进坝区；需在「三峡大坝旅游」公众号预约</p></div>
+<div class="hotel-area"><h4>D4 · 8/20 三峡瀑布</h4><p class="dim">柏曼酒店 → 三峡瀑布：约 32 km · 直通车约 50 分钟，或预约顺风车</p><p class="warn">💡 直通车（三峡游客中心 8:30）或预约顺风车（比大巴灵活便宜）；提前预约、穿防滑鞋带雨具</p></div>
 </section>
 
 <section><h3>📅 每日行程</h3><div class="day"><div class="day-head"><span class="day-date">2026-08-17 周一</span><h3>DAY · 抵达 · 小吃街（铁路坝/解放路）</h3></div>
@@ -521,6 +531,11 @@ if (typeof module !== 'undefined' && module.exports) {
     var icon = L.divIcon({ className: '', html: '<span style="background:#f59e0b;color:#fff;border-radius:8px;font-size:13px;font-weight:700;padding:3px 6px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)">🍢</span>', iconSize: [28, 28], iconAnchor: [14, 14] });
     L.marker([st.lat, st.lng], { icon: icon, zIndexOffset: 1500 }).addTo(foodLayer).bindPopup('<b style="color:#b45309">🍢 ' + st.name + '</b><br>' + st.note);
   });
+  // 🚌 景区直通车发车点（三峡游客中心）
+  L.marker([30.666, 111.348], {
+    icon: L.divIcon({ className: '', html: '<span style="background:#0369a1;color:#fff;border-radius:8px;font-size:12px;font-weight:700;padding:3px 7px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)">🚌 直通车</span>', iconSize: [78, 26], iconAnchor: [39, 13] }),
+    zIndexOffset: 1600
+  }).addTo(routeLayer).bindPopup('<b style="color:#0369a1">🚌 三峡游客中心（景区直通车发车点）</b><br>沿江大道142号·万达对面<br>清江画廊 8:30/9:50 · 三峡瀑布 8:30<br>小程序「三峡旅游直通车」购票');
   // 🚶 City Walk 路线（硬编码：滨江公园→二马路→解放路→古佛寺→儿童公园→铁路坝）
   var cwLayer = L.featureGroup().addTo(map);
   var CW = [
