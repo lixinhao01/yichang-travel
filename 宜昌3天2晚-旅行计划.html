@@ -115,6 +115,7 @@
   <span><i style="background:#16a34a"></i>🚶 City Walk</span>
   <span><i style="background:#f59e0b"></i>🍢 小吃街</span>
   <span><i style="background:#e11d48"></i>🍜 美食店</span>
+  <span><i style="background:#7c3aed"></i>📍 攻略库其他景点</span>
 </div></section>
 
 <section><h3>🚌 交通小攻略（宾馆→景点）</h3>
@@ -563,7 +564,23 @@ if (typeof module !== 'undefined' && module.exports) {
     var icon = L.divIcon({ className: '', html: '<span style="background:#16a34a;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff">' + (i + 1) + '</span>', iconSize: [26, 26], iconAnchor: [13, 13] });
     L.marker([p.lat, p.lng], { icon: icon }).addTo(cwLayer).bindPopup('<b style="color:#16a34a">🚶 City Walk ' + (i + 1) + ' · ' + p.name + '</b>');
   });
-  L.control.layers(null, { '🗺 行程路线': routeLayer, '🚶 City Walk': cwLayer, '🍢 小吃街/🍜 美食': foodLayer }, { collapsed: false }).addTo(map);
+  // 📍 攻略库其他景点（本次不去，标出供参考）
+  var otherLayer = L.featureGroup().addTo(map);
+  var OTHERS = [
+    {name:'两坝一峡', lat:30.71882, lng:111.28215, note:'游船过葛洲坝船闸·西陵峡', anchor:'两坝一峡'},
+    {name:'三峡人家', lat:30.78674, lng:111.1485, note:'龙进溪·巴王寨·土家风情', anchor:'三峡人家'},
+    {name:'朝天吼漂流', lat:31.20, lng:110.80, note:'兴山县·峡谷漂流', anchor:'漂流'},
+    {name:'九畹溪漂流', lat:30.90, lng:110.62, note:'秭归县·峡谷漂流', anchor:'漂流'},
+    {name:'G348 最美公路', lat:30.85, lng:111.15, note:'莲沱畔·沿江自驾观景', anchor:'G348 国道'},
+    {name:'宜昌博物馆', lat:30.63592, lng:111.37452, note:'国家一级博物馆·免费', anchor:'宜昌博物馆'},
+    {name:'三峡大瀑布', lat:30.9482, lng:111.3192, note:'穿瀑体验（本次 D4 去）', anchor:'三峡大瀑布'}
+  ];
+  OTHERS.forEach(function(o){
+    bounds.push([o.lat, o.lng]);
+    var icon = L.divIcon({ className: '', html: '<span style="background:#7c3aed;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)">📍</span>', iconSize: [28, 28], iconAnchor: [14, 14] });
+    L.marker([o.lat, o.lng], { icon: icon }).addTo(otherLayer).bindPopup('<b style="color:#7c3aed">📍 ' + o.name + '</b><br>' + o.note + '<br><a class="pop-link" href="宜昌攻略库.html#' + encodeURIComponent(o.anchor) + '">📖 查看攻略 →</a>');
+  });
+  L.control.layers(null, { '🗺 行程路线': routeLayer, '🚶 City Walk': cwLayer, '🍢 小吃街/🍜 美食': foodLayer, '📍 攻略库其他景点': otherLayer }, { collapsed: false }).addTo(map);
   var focusBtn = L.control({ position: 'bottomleft' });
   focusBtn.onAdd = function(){
     var d = L.DomUtil.create('div', 'leaflet-bar zoom-food');
